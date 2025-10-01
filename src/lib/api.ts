@@ -95,4 +95,42 @@ export async function changePassword(body: ChangePasswordRequest) {
     });
 }
 
+// Booking APIs
+export type BookingRequest = {
+    name: string;
+    email: string;
+    phone_number: string;
+    total_persons: number;
+    service_type: string;
+    service_id: string;
+    message?: string;
+};
+export type BookingResponse = Record<string, unknown>;
+
+export async function createBooking(body: BookingRequest) {
+    return request<BookingResponse>("/booking", {
+        method: "POST",
+        body: JSON.stringify(body),
+    });
+}
+
+// Inquiry APIs
+export type InquiryRequest = {
+    name: string;
+    email: string;
+    phone_number: string;
+    total_persons?: number;
+    service_type: string;
+    service_id: string;
+    message?: string;
+};
+export type InquiryResponse = Record<string, unknown>;
+
+export async function createInquiry(body: InquiryRequest) {
+    return request<InquiryResponse>("/inquiry", {
+        method: "POST",
+        body: JSON.stringify(body),
+    });
+}
+
 

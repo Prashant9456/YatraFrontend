@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, Clock, MapPin, Users } from 'lucide-react';
+import { BookingDialog } from './BookingDialog';
 
 interface HotelCardProps {
   hotel: {
@@ -25,6 +26,7 @@ interface HotelCardProps {
 }
 
 const HotelCard = ({ hotel, onViewDetails }: HotelCardProps) => {
+  const [inquiryOpen, setInquiryOpen] = useState(false);
   const minPrice = Math.min(...hotel.rooms.map(room => room.price));
 
   return (
@@ -87,7 +89,7 @@ const HotelCard = ({ hotel, onViewDetails }: HotelCardProps) => {
             <div className="text-sm text-muted-foreground">per night</div>
           </div>
           <div className="flex space-x-2">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => setInquiryOpen(true)}>
               Inquiry
             </Button>
             <Button variant="booking" size="sm" asChild>
@@ -98,6 +100,17 @@ const HotelCard = ({ hotel, onViewDetails }: HotelCardProps) => {
           </div>
         </div>
       </div>
+      
+      {/* Inquiry Dialog */}
+      <BookingDialog
+        open={inquiryOpen}
+        onOpenChange={setInquiryOpen}
+        type="inquiry"
+        serviceType="hotel"
+        serviceId={hotel.id.toString()}
+        serviceName={hotel.name}
+        additionalInfo={`Location: ${hotel.location}\nCheck-in: ${hotel.checkIn}, Check-out: ${hotel.checkOut}\nStarting from: ₹${minPrice}/night`}
+      />
     </div>
   );
 };

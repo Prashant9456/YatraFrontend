@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { guides } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,13 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { MapPin, Star, Phone, MessageCircle, Calendar, Clock, Languages, Award } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function GuideDetails() {
   const { id } = useParams();
   const guide = guides.find(g => g.id === Number(id));
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
 
   if (!guide) {
     return (
@@ -154,17 +158,17 @@ export default function GuideDetails() {
               <CardContent className="p-0">
                 <h3 className="font-bold text-foreground mb-4">Book This Guide</h3>
                 <div className="space-y-4">
-                  <Button variant="booking" className="w-full">
+                  <Button variant="booking" className="w-full" onClick={() => setBookingOpen(true)}>
                     <Calendar className="w-4 h-4 mr-2" />
                     Book Now
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => setInquiryOpen(true)}>
                     <Phone className="w-4 h-4 mr-2" />
                     Call {guide.contact}
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => setInquiryOpen(true)}>
                     <MessageCircle className="w-4 h-4 mr-2" />
-                    WhatsApp Chat
+                    Send Inquiry
                   </Button>
                 </div>
               </CardContent>
@@ -237,6 +241,26 @@ export default function GuideDetails() {
       </main>
 
       <Footer />
+      
+      {/* Booking & Inquiry Dialogs */}
+      <BookingDialog
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+        type="booking"
+        serviceType="guide"
+        serviceId={id || ''}
+        serviceName={guide.name}
+        additionalInfo={`Guide Specialization: ${guide.specialization}\nExperience: ${guide.experience}\nLanguages: ${guide.languages.join(', ')}\nLocation: ${guide.location}\nRate: ₹${guide.price}/day\nContact: ${guide.contact}`}
+      />
+      <BookingDialog
+        open={inquiryOpen}
+        onOpenChange={setInquiryOpen}
+        type="inquiry"
+        serviceType="guide"
+        serviceId={id || ''}
+        serviceName={guide.name}
+        additionalInfo={`Guide Specialization: ${guide.specialization}\nExperience: ${guide.experience}\nLanguages: ${guide.languages.join(', ')}\nLocation: ${guide.location}\nRating: ${guide.rating}⭐`}
+      />
     </div>
   );
 }

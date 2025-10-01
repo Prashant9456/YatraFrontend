@@ -12,6 +12,7 @@ import ResetPassword from "./pages/ResetPassword";
 import GuideDetails from "./pages/GuideDetails";
 import VehicleDetails from "./pages/VehicleDetails";
 import TempleDetails from "./pages/TempleDetails";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/profile" element={<Profile />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

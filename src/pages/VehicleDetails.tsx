@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { vehicles } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
@@ -7,10 +8,13 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { Car, Users, Fuel, Navigation, Phone, Calendar, Shield, Star } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function VehicleDetails() {
   const { id } = useParams();
   const vehicle = vehicles.find(v => v.id === Number(id));
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
 
   if (!vehicle) {
     return (
@@ -89,8 +93,8 @@ export default function VehicleDetails() {
                       <span className="text-muted-foreground ml-1">/km</span>
                     </div>
                   </div>
-                  <Button variant="booking" size="lg">
-                    <Phone className="w-4 h-4 mr-2" />
+                  <Button variant="booking" size="lg" onClick={() => setBookingOpen(true)}>
+                    <Calendar className="w-4 h-4 mr-2" />
                     Book Now
                   </Button>
                 </div>
@@ -124,7 +128,7 @@ export default function VehicleDetails() {
                       <span className="text-muted-foreground ml-1">approx</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Up to 40 km included</p>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full" onClick={() => setBookingOpen(true)}>
                       <Calendar className="w-4 h-4 mr-2" />
                       Select Dates
                     </Button>
@@ -137,7 +141,7 @@ export default function VehicleDetails() {
                       <span className="text-muted-foreground ml-1">approx</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Up to 80 km included</p>
-                    <Button variant="outline" className="w-full">
+                    <Button variant="outline" className="w-full" onClick={() => setBookingOpen(true)}>
                       <Calendar className="w-4 h-4 mr-2" />
                       Select Dates
                     </Button>
@@ -150,7 +154,7 @@ export default function VehicleDetails() {
                       <span className="text-muted-foreground ml-1">per day</span>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">Up to 200 km per day included</p>
-                    <Button variant="outline" className="w-full md:w-auto">
+                    <Button variant="outline" className="w-full md:w-auto" onClick={() => setInquiryOpen(true)}>
                       <Calendar className="w-4 h-4 mr-2" />
                       Custom Quote
                     </Button>
@@ -224,13 +228,13 @@ export default function VehicleDetails() {
                     <div className="text-2xl font-bold text-primary">₹{vehicle.pricePerKm}</div>
                     <div className="text-sm text-muted-foreground">per kilometer</div>
                   </div>
-                  <Button variant="booking" className="w-full">
+                  <Button variant="booking" className="w-full" onClick={() => setBookingOpen(true)}>
                     <Calendar className="w-4 h-4 mr-2" />
                     Book Now
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => setInquiryOpen(true)}>
                     <Phone className="w-4 h-4 mr-2" />
-                    Call for Quote
+                    Send Inquiry
                   </Button>
                 </div>
               </CardContent>
@@ -310,6 +314,26 @@ export default function VehicleDetails() {
       </main>
 
       <Footer />
+      
+      {/* Booking & Inquiry Dialogs */}
+      <BookingDialog
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+        type="booking"
+        serviceType="vehicle"
+        serviceId={id || ''}
+        serviceName={vehicle.model}
+        additionalInfo={`Vehicle Type: ${vehicle.type}\nModel: ${vehicle.model}\nCapacity: ${vehicle.capacity}\nFeatures: ${vehicle.features.join(', ')}\nRate: ₹${vehicle.pricePerKm}/km`}
+      />
+      <BookingDialog
+        open={inquiryOpen}
+        onOpenChange={setInquiryOpen}
+        type="inquiry"
+        serviceType="vehicle"
+        serviceId={id || ''}
+        serviceName={vehicle.model}
+        additionalInfo={`Vehicle Type: ${vehicle.type}\nModel: ${vehicle.model}\nCapacity: ${vehicle.capacity}\nFeatures: ${vehicle.features.join(', ')}\nRate: ₹${vehicle.pricePerKm}/km`}
+      />
     </div>
   );
 }

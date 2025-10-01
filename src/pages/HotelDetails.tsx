@@ -1,16 +1,21 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { hotels } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { MapPin, Clock, Star, Wifi, Car, Utensils, Waves, Phone, Calendar } from 'lucide-react';
+import { MapPin, Clock, Star, Wifi, Car, Utensils, Waves, Phone, Calendar, MessageCircle, Mail } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function HotelDetails() {
   const { id } = useParams();
   const hotel = hotels.find(h => h.id === Number(id));
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [inquiryOpen, setInquiryOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<string>('');
 
   if (!hotel) {
     return (
@@ -80,7 +85,7 @@ export default function HotelDetails() {
                       <span className="text-muted-foreground ml-1">Rating</span>
                     </div>
                   </div>
-                  <Button variant="booking" size="lg">
+                  <Button variant="booking" size="lg" onClick={() => setInquiryOpen(true)}>
                     <Phone className="w-4 h-4 mr-2" />
                     Contact Now
                   </Button>
@@ -152,6 +157,10 @@ export default function HotelDetails() {
                               variant={room.available ? "default" : "outline"} 
                               disabled={!room.available}
                               className="mt-2"
+                              onClick={() => {
+                                setSelectedRoom(`${room.type} - ${room.beds} - ₹${room.price}/night`);
+                                setBookingOpen(true);
+                              }}
                             >
                               <Calendar className="w-4 h-4 mr-2" />
                               {room.available ? "Book Now" : "Notify Me"}
@@ -173,14 +182,16 @@ export default function HotelDetails() {
               <CardContent className="p-0">
                 <h3 className="font-bold text-foreground mb-4">Quick Inquiry</h3>
                 <div className="space-y-4">
-                  <Button variant="booking" className="w-full">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Call for Booking
+                  <Button variant="booking" className="w-full" onClick={() => setBookingOpen(true)}>
+                    <Calendar className="w-4 h-4 mr-2" />
+                    Book Now
                   </Button>
-                  <Button variant="outline" className="w-full">
-                    WhatsApp Inquiry
+                  <Button variant="outline" className="w-full" onClick={() => setInquiryOpen(true)}>
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Send Inquiry
                   </Button>
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full" onClick={() => setInquiryOpen(true)}>
+                    <Mail className="w-4 h-4 mr-2" />
                     Email Details
                   </Button>
                 </div>
@@ -226,6 +237,26 @@ export default function HotelDetails() {
       </main>
 
       <Footer />
+      
+      {/* Booking & Inquiry Dialogs */}
+      <BookingDialog
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+        type="booking"
+        serviceType="hotel"
+        serviceId={id || ''}
+        serviceName={hotel.name}
+        additionalInfo={selectedRoom ? `Selected Room: ${selectedRoom}\nLocation: ${hotel.location}\nCheck-in: ${hotel.checkIn}, Check-out: ${hotel.checkOut}` : `Location: ${hotel.location}\nCheck-in: ${hotel.checkIn}, Check-out: ${hotel.checkOut}`}
+      />
+      <BookingDialog
+        open={inquiryOpen}
+        onOpenChange={setInquiryOpen}
+        type="inquiry"
+        serviceType="hotel"
+        serviceId={id || ''}
+        serviceName={hotel.name}
+        additionalInfo={`Location: ${hotel.location}\nCheck-in: ${hotel.checkIn}, Check-out: ${hotel.checkOut}\nRating: ${hotel.rating}⭐`}
+      />
     </div>
   );
 }

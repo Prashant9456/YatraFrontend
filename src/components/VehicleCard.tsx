@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Users, Fuel, Navigation, Shield } from 'lucide-react';
+import { BookingDialog } from './BookingDialog';
 
 interface VehicleCardProps {
   vehicle: {
@@ -19,6 +20,7 @@ interface VehicleCardProps {
 }
 
 const VehicleCard = ({ vehicle, onBookVehicle }: VehicleCardProps) => {
+  const [bookingOpen, setBookingOpen] = useState(false);
   const getVehicleIcon = (feature: string) => {
     switch (feature.toLowerCase()) {
       case 'ac':
@@ -89,13 +91,24 @@ const VehicleCard = ({ vehicle, onBookVehicle }: VehicleCardProps) => {
             <Button 
               variant="booking" 
               size="sm"
-              onClick={() => onBookVehicle(vehicle.id)}
+              onClick={() => setBookingOpen(true)}
             >
               Book Now
             </Button>
           </div>
         </div>
       </div>
+      
+      {/* Booking Dialog */}
+      <BookingDialog
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+        type="booking"
+        serviceType="vehicle"
+        serviceId={vehicle.id.toString()}
+        serviceName={vehicle.model}
+        additionalInfo={`Vehicle Type: ${vehicle.type}\nModel: ${vehicle.model}\nCapacity: ${vehicle.capacity}\nFeatures: ${vehicle.features.join(', ')}\nRate: ₹${vehicle.pricePerKm}/km`}
+      />
     </div>
   );
 };

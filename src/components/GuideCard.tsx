@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, Phone, MapPin, Globe } from 'lucide-react';
+import { BookingDialog } from './BookingDialog';
 
 interface GuideCardProps {
   guide: {
@@ -22,6 +23,7 @@ interface GuideCardProps {
 }
 
 const GuideCard = ({ guide, onBookGuide }: GuideCardProps) => {
+  const [bookingOpen, setBookingOpen] = useState(false);
   return (
     <div className="card-gradient rounded-xl shadow-soft hover:shadow-medium transition-smooth border border-border overflow-hidden group">
       {/* Header with Image and Rating */}
@@ -97,13 +99,24 @@ const GuideCard = ({ guide, onBookGuide }: GuideCardProps) => {
             <Button 
               variant="booking" 
               size="sm"
-              onClick={() => onBookGuide(guide.id)}
+              onClick={() => setBookingOpen(true)}
             >
               Book Guide
             </Button>
           </div>
         </div>
       </div>
+      
+      {/* Booking Dialog */}
+      <BookingDialog
+        open={bookingOpen}
+        onOpenChange={setBookingOpen}
+        type="booking"
+        serviceType="guide"
+        serviceId={guide.id.toString()}
+        serviceName={guide.name}
+        additionalInfo={`Guide Specialization: ${guide.specialization}\nExperience: ${guide.experience}\nLanguages: ${guide.languages.join(', ')}\nLocation: ${guide.location}\nRate: ₹${guide.price}/day`}
+      />
     </div>
   );
 };

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Clock, MapPin, Sunrise } from 'lucide-react';
+import { BookingDialog } from './BookingDialog';
 
 interface TempleCardProps {
   temple: {
@@ -19,6 +20,7 @@ interface TempleCardProps {
 }
 
 const TempleCard = ({ temple, onGetDetails }: TempleCardProps) => {
+  const [inquiryOpen, setInquiryOpen] = useState(false);
   return (
     <div className="card-gradient rounded-xl shadow-soft hover:shadow-medium transition-smooth border border-border overflow-hidden group">
       {/* Image */}
@@ -80,11 +82,22 @@ const TempleCard = ({ temple, onGetDetails }: TempleCardProps) => {
               Get Details
             </Link>
           </Button>
-          <Button variant="booking" className="flex-1">
+          <Button variant="booking" className="flex-1" onClick={() => setInquiryOpen(true)}>
             Inquire
           </Button>
         </div>
       </div>
+      
+      {/* Inquiry Dialog */}
+      <BookingDialog
+        open={inquiryOpen}
+        onOpenChange={setInquiryOpen}
+        type="inquiry"
+        serviceType="temple"
+        serviceId={temple.id.toString()}
+        serviceName={temple.name}
+        additionalInfo={`Location: ${temple.location}\nTimings: ${temple.timings}\nBest Time to Visit: ${temple.bestTime}\nFeatures: ${temple.features.join(', ')}`}
+      />
     </div>
   );
 };

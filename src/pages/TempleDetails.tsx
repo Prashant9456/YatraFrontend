@@ -1,16 +1,19 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { temples } from '@/data/mockData';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
-import { MapPin, Clock, Phone, Camera, Calendar, Sun, Moon, Heart, Info } from 'lucide-react';
+import { MapPin, Clock, Phone, Camera, Calendar, Sun, Moon, Heart, Info, MessageCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { BookingDialog } from '@/components/BookingDialog';
 
 export default function TempleDetails() {
   const { id } = useParams();
   const temple = temples.find(t => t.id === Number(id));
+  const [inquiryOpen, setInquiryOpen] = useState(false);
 
   if (!temple) {
     return (
@@ -79,7 +82,7 @@ export default function TempleDetails() {
                       <span className="text-sm text-muted-foreground">{temple.timings}</span>
                     </div>
                   </div>
-                  <Button variant="booking" size="lg">
+                  <Button variant="booking" size="lg" onClick={() => setInquiryOpen(true)}>
                     <Info className="w-4 h-4 mr-2" />
                     Inquire Now
                   </Button>
@@ -243,13 +246,13 @@ export default function TempleDetails() {
                     <div className="font-bold text-foreground">Open Daily</div>
                     <div className="text-sm text-muted-foreground">{temple.timings}</div>
                   </div>
-                  <Button variant="booking" className="w-full">
+                  <Button variant="booking" className="w-full" onClick={() => setInquiryOpen(true)}>
                     <Calendar className="w-4 h-4 mr-2" />
                     Plan Your Visit
                   </Button>
-                  <Button variant="outline" className="w-full">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Contact Temple
+                  <Button variant="outline" className="w-full" onClick={() => setInquiryOpen(true)}>
+                    <MessageCircle className="w-4 h-4 mr-2" />
+                    Send Inquiry
                   </Button>
                 </div>
               </CardContent>
@@ -336,6 +339,17 @@ export default function TempleDetails() {
       </main>
 
       <Footer />
+      
+      {/* Inquiry Dialog */}
+      <BookingDialog
+        open={inquiryOpen}
+        onOpenChange={setInquiryOpen}
+        type="inquiry"
+        serviceType="temple"
+        serviceId={id || ''}
+        serviceName={temple.name}
+        additionalInfo={`Location: ${temple.location}\nTimings: ${temple.timings}\nBest Time to Visit: ${temple.bestTime}\nFeatures: ${temple.features.join(', ')}`}
+      />
     </div>
   );
 }

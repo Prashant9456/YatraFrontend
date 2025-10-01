@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { login, type LoginRequest } from '@/lib/api';
+import { authService } from '@/lib/auth';
 import { toast } from 'sonner';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -21,6 +22,13 @@ const Login = () => {
       toast.error(result.message || 'Login failed');
       return;
     }
+    
+    // Store user data
+    if (result.data) {
+      const userData = result.data as { token: string; email: string; id: string; name: string };
+      authService.setUser(userData);
+    }
+    
     toast.success('Logged in successfully');
     navigate('/');
   };
